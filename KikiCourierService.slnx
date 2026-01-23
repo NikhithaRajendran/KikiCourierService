@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="KikiCourierService.Test/KikiCourierService.Test.csproj" Id="3c32bff8-3d3c-4a99-87bf-5cb748118929" />
+  <Project Path="KikiCourierService/KikiCourierService.csproj" />
+</Solution>
