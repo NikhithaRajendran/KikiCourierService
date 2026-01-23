@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "KikiCourierService": {
+      "commandName": "Project",
+      "commandLineArgs": "C:\\Users\\Nikhitha_Rajendran\\Downloads\\input.txt"
+    }
+  }
+}
