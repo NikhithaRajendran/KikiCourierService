@@ -1,4 +1,6 @@
 ﻿using KikiCourierService.Services.CostCalculator;
+using Microsoft.Extensions.Configuration;
+using Moq;
 
 namespace KikiCourierService.Test.ServiceTests
 {
@@ -6,11 +8,12 @@ namespace KikiCourierService.Test.ServiceTests
     public class OfferCalculatorTest
     {
         private OfferCalculator _offerCalculator;
-
+        private Mock<IConfiguration> _configurationMock;
         [SetUp]
         public void SetUp()
         {
-            _offerCalculator = new OfferCalculator();
+            _configurationMock = new Mock<IConfiguration>();
+            _offerCalculator = new OfferCalculator(_configurationMock.Object);
         }
 
         [Test]

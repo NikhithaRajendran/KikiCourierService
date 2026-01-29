@@ -1,4 +1,5 @@
 ﻿using KikiCourierService.Models;
+using Microsoft.Extensions.Configuration;
 
 namespace KikiCourierService.Services.CostCalculator
 {
@@ -6,10 +7,12 @@ namespace KikiCourierService.Services.CostCalculator
     {
         private readonly IDiscountCalculator _dicountCalculator;
         private readonly IOfferCalculator _offerCalculator;
-        public CostCalculator(IDiscountCalculator discountCalculator, IOfferCalculator offerCalculator)
+        private readonly IConfiguration _configuration;
+        public CostCalculator(IDiscountCalculator discountCalculator, IOfferCalculator offerCalculator, IConfiguration configuration)
         {
             _dicountCalculator = discountCalculator;
             _offerCalculator = offerCalculator;
+            _configuration = configuration;
         }
         public async Task<decimal> CalculateTotalDeliveryCost(decimal baseCost, decimal discount)
         {
@@ -19,7 +22,9 @@ namespace KikiCourierService.Services.CostCalculator
         {
             try
             {
-                return baseDeliveryCost + (package.Weight * 10) + (package.Distance * 5);
+                decimal.TryParse(_configuration["Constants:WeightMultiplier"], out decimal weightMultiplier);
+                decimal.TryParse(_configuration["Constants:DistanceMultiplier"], out decimal distanceMultiplier);
+                return baseDeliveryCost + (package.Weight * weightMultiplier) + (package.Distance * distanceMultiplier);
             }
             catch (Exception ex)
             {

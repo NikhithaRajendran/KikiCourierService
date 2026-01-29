@@ -1,32 +1,39 @@
 ﻿using KikiCourierService.Models;
+using Microsoft.Extensions.Configuration;
 using System.Text.Json;
 
 namespace KikiCourierService.Services.CostCalculator
 {
     public class OfferCalculator : IOfferCalculator
     {
-        private const string DefaultOffersFilePath = "offers.json";
+        private readonly IConfiguration _configuration;
+        private readonly string DefaultOffersFilePath = "offers.json";
+        public OfferCalculator(IConfiguration configuration) { 
+            _configuration = configuration;
+            DefaultOffersFilePath = _configuration["Constants:DefaultOffersFilePath"] ??string.Empty;
+        }
+       
 
-        public async Task<List<Offer>> LoadOffersAsync()
+        public async Task<List<Offer>?> LoadOffersAsync()
         {
             return await LoadOffersAsync(DefaultOffersFilePath);
         }
 
-        public async Task<List<Offer>> LoadOffersAsync(string filePath)
+        public async Task<List<Offer>?> LoadOffersAsync(string filePath)
         {
             try
             {
                 if (!File.Exists(filePath))
                 {
-                    Console.WriteLine($"Offers file not found at {filePath}. Using default offers.");
+                    Console.WriteLine($"Offers file not found at {filePath}.");
                 }
 
                 var jsonContent = await File.ReadAllTextAsync(filePath);
                 var offerConfiguration = JsonSerializer.Deserialize<OfferConfiguration>(jsonContent, new JsonSerializerOptions
                 {
                     PropertyNameCaseInsensitive = true
-                }); 
-                var offers = offerConfiguration.Offers.Where(o => o.IsActive).Select(CreateOfferFromData).ToList();
+                });
+                var offers = offerConfiguration?.Offers.Where(o => o.IsActive).Select(CreateOfferFromData).ToList();
 
                 return offers;
             }

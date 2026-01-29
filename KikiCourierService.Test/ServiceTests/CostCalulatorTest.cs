@@ -1,5 +1,6 @@
 ﻿using KikiCourierService.Models;
 using KikiCourierService.Services.CostCalculator;
+using Microsoft.Extensions.Configuration;
 using Moq;
 
 namespace KikiCourierService.Test.ServiceTests
@@ -9,14 +10,17 @@ namespace KikiCourierService.Test.ServiceTests
     {
         private Mock<IDiscountCalculator> _discountCalculatorMock;
         private Mock<IOfferCalculator> _offerCalculatorMock;
+        private IConfiguration _configuration;
         private CostCalculator _costCalculator;
 
         [SetUp]
         public void SetUp()
         {
             _discountCalculatorMock = new Mock<IDiscountCalculator>();
-            _offerCalculatorMock = new Mock<IOfferCalculator>();
-            _costCalculator = new CostCalculator(_discountCalculatorMock.Object, _offerCalculatorMock.Object);
+            _offerCalculatorMock = new Mock<IOfferCalculator>();           
+            _configuration = new ConfigurationBuilder().AddJsonFile("appsettings.test.json").Build();
+            
+            _costCalculator = new CostCalculator(_discountCalculatorMock.Object, _offerCalculatorMock.Object,_configuration);
         }
 
         [Test]
