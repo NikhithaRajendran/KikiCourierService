@@ -1,11 +1,10 @@
 ﻿using KikiCourierService.Models;
-using KikiCourierService.Offers;
 
 namespace KikiCourierService.Services.CostCalculator
 {
     public interface IDiscountCalculator
     {
-        decimal CalculateDiscount(decimal TotalCost, Package package);
-        Offer? GetOffer(string offerCode);
+        Task<decimal> CalculateDiscount(decimal TotalCost, Package package, List<Offer> offers);
+        Offer? GetOffer(string offerCode, List<Offer> offers);
     }
 }

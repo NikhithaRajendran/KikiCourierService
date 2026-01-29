@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace KikiCourierService.Helpers
+﻿namespace KikiCourierService.Helpers
 {
     public static class RoundOffHelper
     {  public static decimal roundOff(decimal value)

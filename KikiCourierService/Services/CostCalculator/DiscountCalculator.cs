@@ -1,23 +1,15 @@
 ﻿using KikiCourierService.Models;
-using KikiCourierService.Offers;
 
 namespace KikiCourierService.Services.CostCalculator
 {
     public class DiscountCalculator : IDiscountCalculator
     {
-        private readonly IDictionary<string, Offer> _offers;
-
-        public DiscountCalculator(IEnumerable<Offer> offers)
-        {
-            _offers = offers.ToDictionary(o => o.OfferCode, o => o);
-
-        }
-        public decimal CalculateDiscount(decimal TotalCost, Package package)
+        public async Task<decimal> CalculateDiscount(decimal TotalCost, Package package, List<Offer> offers)
         {
             try
             {
-                var offer = GetOffer(package.OfferCode);
-                if (offer != null && offer.IsOfferApplication(package))
+                var offer = GetOffer(package.OfferCode, offers);
+                if (offer != null && offer.IsOfferApplicable(package))
                 {
                     return offer.DiscountPercent * TotalCost / 100;
                 }
@@ -29,9 +21,9 @@ namespace KikiCourierService.Services.CostCalculator
             }
            
         }
-        public Offer? GetOffer(string offerCode)
+        public Offer? GetOffer(string offerCode, List<Offer> offers)
         {
-            return _offers.TryGetValue(offerCode, out var offer) ? offer : null;
+            return offers.FirstOrDefault(o => o.OfferCode == offerCode);
         }
     }
 }

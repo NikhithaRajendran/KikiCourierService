@@ -1,6 +1,5 @@
 ﻿using KikiCourierService.Models;
 using KikiCourierService.OderOrchestrator;
-using KikiCourierService.Offers;
 using KikiCourierService.Services.CostCalculator;
 using KikiCourierService.Services.DeliveryScheduler;
 using KikiCourierService.Services.InputParsers;
@@ -14,9 +13,7 @@ namespace KikiCourierService.Startup
         public static IServiceCollection InjectDependencies(this IServiceCollection services)
         {
             services.AddSingleton<IOrderOrchestrator, TomboOrderOrchestrator>();
-            services.AddSingleton<Offer, OFR001>();
-            services.AddSingleton<Offer, OFR002>();
-            services.AddSingleton<Offer, OFR003>();
+            services.AddSingleton<IOfferCalculator, OfferCalculator>();
             services.AddSingleton<IInputParser, FileInputParser>();
             services.AddSingleton<IDiscountCalculator, DiscountCalculator>();
             services.AddSingleton<ICostCalculator, CostCalculator>();

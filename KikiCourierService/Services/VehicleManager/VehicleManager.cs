@@ -4,10 +4,10 @@ namespace KikiCourierService.Services.VehicleManager
 {
     public class VehicleManager : IVehicleManager
     {
-        public List<Vehicle> GetVehicles(VehicleInfo vehicleInfo)
+        public List<Vehicle> GetVehicles(VehicleInfo? vehicleInfo)
         {
             var vehicles = new List<Vehicle>();
-            for (int i = 1; i <= vehicleInfo.NumberOfVehicles; i++)
+            for (int i = 1; i <= vehicleInfo?.NumberOfVehicles; i++)
             {
                 vehicles.Add(new Vehicle(i, vehicleInfo.MaxCarriableWeight, vehicleInfo.MaxSpeed));
             }

@@ -7,9 +7,10 @@ namespace KikiCourierService.Services.InputParsers
         public async Task<InputData?> ParseAsync(string filePath)
         {
             var fileInputLines = await GetContent(filePath);            
-            if (fileInputLines.Length == 0)
+            if (fileInputLines==null ||fileInputLines.Length == 0)
             {
-                throw new ArgumentException("Please provide valid package details");
+                Console.WriteLine("Please provide valid package details");
+                return null;
             }
             try
             {
@@ -22,7 +23,7 @@ namespace KikiCourierService.Services.InputParsers
                 else
                 {
                     Console.WriteLine("Please provide a valid base cost");
-                    throw new ArgumentException("Invalid Base Cost");
+                    return null;
                 }
                 if (int.TryParse(headerParts[1], out var packageCount))
                 {
@@ -31,7 +32,7 @@ namespace KikiCourierService.Services.InputParsers
                 else
                 {
                     Console.WriteLine("Please provide a valid package count");
-                    throw new ArgumentException("Invalid Package Count");
+                    return null;
                 }
 
                 for (int i = 1; i <= inputData.NumberOfPackages; i++)
@@ -39,7 +40,8 @@ namespace KikiCourierService.Services.InputParsers
                     var package = GetPackageData(fileInputLines[i]);
                     if (package == null)
                     {
-                        throw new ArgumentException("Invalid Package Details");
+                        Console.WriteLine("Invalid Package Details");
+                        return null;
                     }
                     inputData.Packages.Add(package);
                 }
@@ -48,21 +50,27 @@ namespace KikiCourierService.Services.InputParsers
                     var vehicleInfo = GetVehicleInfo(fileInputLines[packageCount + 1]);
                     if (vehicleInfo == null)
                     {
-                        throw new ArgumentException("Invalid Vehicle Information");
+                        Console.WriteLine("Invalid Vehicle Information");
+                        return null;
                     }
                     inputData.VehicleInfo = vehicleInfo;
                 }
                 return inputData;
             }
+            catch (ArgumentException ex)
+            {
+                Console.WriteLine($"{ex.Message}");
+                return null;
+            }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error while parsing input {ex.ToString()}");
-                throw;
+                return null;
             }
 
 
         }
-        public async Task<string[]> GetContent(string fileName)
+        public async Task<string[]?> GetContent(string fileName)
         {
             if (File.Exists(fileName))
             {
@@ -77,7 +85,7 @@ namespace KikiCourierService.Services.InputParsers
             else
             {
                 Console.WriteLine("Please provide a valid filePath");
-                throw new ArgumentException("Invalid File Path");
+                return null;
             }
         }
         public Package? GetPackageData(string packageData)
@@ -88,12 +96,27 @@ namespace KikiCourierService.Services.InputParsers
                 Console.WriteLine("Please provide Package Details");
                 return null;
             }
-            Package package = new Package(packageInfo[0],decimal.Parse(packageInfo[1]),
-                decimal.Parse(packageInfo[2]));
+            if (decimal.TryParse(packageInfo[1], out var packageWeight))
+            {
+                if(decimal.TryParse(packageInfo[2], out var packageDistance))
+                {
+                    Package package = new Package(packageInfo[0], packageWeight, packageDistance);
+                    if (packageInfo.Length > 3)
+                        package.OfferCode = packageInfo[3];
+                    return package;
 
-            if (packageInfo.Length > 3)
-                package.OfferCode = packageInfo[3];
-            return package;
+                }
+                else
+                {
+                    Console.WriteLine("Please provide a valid package distance");
+                    return null;
+                }
+            } 
+            else
+            {
+                Console.WriteLine("Please provide a valid package weigtht");
+                return null;
+            }             
         }
         public VehicleInfo? GetVehicleInfo(string vehicleData)
         {

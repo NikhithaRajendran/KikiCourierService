@@ -16,8 +16,17 @@ try
 
     var orchestrationService = serviceProvider.GetRequiredService<IOrderOrchestrator>();
     var response = await orchestrationService.ProcessPackageDeliveryAsync(args);
-
-    Console.WriteLine("Kiki Courier Service Delivery Estimate Calculation Completed");
+    if (response != null)
+        Console.WriteLine("Kiki Courier Service Delivery Estimate Calculation Completed");
+    else
+    {
+        Console.WriteLine("Delivery Estimation Failed");
+    }
+}
+catch (ArgumentException ex)
+{
+    Console.WriteLine($"{ex.Message}");
+    return;
 }
 catch (Exception ex)
 {

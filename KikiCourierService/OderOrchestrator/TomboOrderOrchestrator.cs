@@ -32,8 +32,9 @@ namespace KikiCourierService.OderOrchestrator
                 {
                     DeliveryEstimate deliveryEstimate = new DeliveryEstimate();
                     deliveryEstimate.PackageId = package.Id;
-                    deliveryEstimate.TotalCost = _costCalculator.CalculateTotalDeliveryCost(inputData.BaseDeliveryCost, package, out decimal discount);
-                    deliveryEstimate.Discount = discount;
+                    decimal baseCost = _costCalculator.CalculateBaseCost(inputData.BaseDeliveryCost, package);
+                    deliveryEstimate.Discount = await _costCalculator.CalculateDiscount(baseCost, package);
+                    deliveryEstimate.TotalCost = await _costCalculator.CalculateTotalDeliveryCost(baseCost, deliveryEstimate.Discount);
                     outputData.DeliveryEstimates.Add(deliveryEstimate);
                 }
                 if (inputData.VehicleInfo != null)
